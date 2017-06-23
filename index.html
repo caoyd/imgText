@@ -1,1 +1,235 @@
-hi
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>canvas</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <link rel="stylesheet" href="css/lib/bootstrap.min.css">
+  <style type="text/css">
+    .modal.fade .modal-dialog {
+      -webkit-transition: -webkit-transform .3s ease-out;
+      transition: transform .3s ease-out;
+      -webkit-transform: translate(0,0);
+      transform: translate(0,0);
+    }
+    .modal.slide .modal-dialog {
+        -webkit-transition: -webkit-transform .5s ease-out;
+        transition: transform .5s ease-out;
+        -webkit-transform: translate3d(100%,0,0);
+        transform: translate(100%,0,0);
+    }
+    .modal.slide.in .modal-dialog {
+        -webkit-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+    html, body { height: 100%; background: #eee; }
+    ul { margin: 0; padding: 5px 0 0 0; }
+    li { float: left; display: flex; margin: 0 0 5px 5px; width: 100px; height: 100px; padding: 5px; overflow: hidden; justify-content: center; align-items: center; align-content: center; background: #fff; box-sizing: border-box; }
+    li img { max-width: 100%; max-height: 100%; }
+    canvas { display: block; margin: 30px auto 0; border: 1px solid #ccc; }
+    #text-wrap { position: absolute; top: 100px; left: 20px; padding: 0 20px 0 0; border: 2px solid #999; z-index: 9; }
+    #text-wrap.hide { visibility: hidden; }
+    #text-wrap i { position: absolute; top: 0; right: 0; width: 20px; height: 100%; background: rgba(0,0,0,.2) url(images/move.png) no-repeat center; background-size: contain; }
+    #text,
+    #text-clone { padding: 5px; font-size: 24px; font-weight: bold; line-height: 24px; box-sizing: border-box; }
+    #text { width: 200px; height: 34px; border: none; background: none; resize: none; vertical-align: top; overflow: hidden; min-width: 100px !important; min-height: 58px !important; }
+    #text:focus { outline: none; }
+    #text-clone { position: absolute; top: 0; left: 0; visibility: hidden; }
+    #modal-canvas .modal-header { position: relative; }
+    #modal-canvas .modal-header .close { position: absolute; top: 0; right: 0; bottom: 0; padding: 0 20px; font-size: 30px; }
+    #modal-canvas .modal-dialog { margin: 0; width: 100%; height: 100%; }
+    #modal-canvas .modal-content { height: 100%; position: relative; border-radius: 0; box-shadow: none; border: none; }
+    #modal-canvas .btns { padding-top: 30px; }
+    #modal-canvas .btn { padding-left: 30px; padding-right: 30px; outline: none; }
+    #imgDone { display: block; margin: 30px auto 0; border: 1px solid #ccc; }
+    #imgDone.hide { display: none; }
+  </style>
+</head>
+<body>
+
+  <ul>
+    <li class="js-imgfun"><img data-original="images/1.jpg" data-text="小伙子<br>你过来试试" data-pos='{"top":30,"left":10}'></li>
+    <li class="js-imgfun"><img data-original="images/2.jpg" data-text="就你那几张破图<br>我懒得跟你斗" data-pos='{"top":240,"left":50}'></li>
+    <li class="js-imgfun"><img data-original="images/3-thumb.jpg" data-large="images/3.jpg" data-text="再发这种信息就<br>放群主出来咬你" data-pos='{"top":205,"left":30}'></li>
+    <li class="js-imgfun"><img data-original="images/4.jpg" data-text="别以为你长得丑<br>就不打你" data-pos='{"top":10,"left":10}'></li>
+  </ul>
+
+  <div class="modal slide" id="modal-canvas" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div id="text-clone"></div>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+          <h4 class="modal-title" id="myLargeModalLabel">添加文字</h4>
+        </div>
+        <canvas></canvas>
+        <img class="hide" id="imgDone">
+        <span class="hide" id="text-wrap"><textarea id="text" cols="30" rows="10"></textarea><i></i></span>
+        <div class="text-center btns">
+          <button class="btn btn-default btn-lg" id="btn-local">本地图片</button> &nbsp;
+          <button class="btn btn-primary btn-lg" id="btn-ok">完成</button>
+        </div>
+        <div id="info"></div>
+        <div id="preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/bootstrap.min.js"></script>
+  <script src="js/lib/jquery.plugins.js"></script>
+  <script>
+
+
+    $(function () {
+      var myLazyLoad = new LazyLoad({
+        // example of options object -> see options section
+        // threshold: 500,
+        // container: document.getElementById('scrollPane'),
+        // elements_selector: ".showCase img",
+        // throttle: 200,
+        // data_src: "src",
+        // data_srcset: "srcset",
+        // callback_set: function() { /* ... */ }
+      });
+			ImgFun.init();
+    });
+
+    var ImgFun = {
+      opts: {
+        color: '#000',
+        font: 'bold 24px "微软雅黑"',
+        fontSize: 24
+      },
+      init: function() {
+        this.$canvas = $('canvas');
+        this.$modalCanvas = $('#modal-canvas');
+        if (!this.$canvas.length || !this.$modalCanvas.length) {
+          return;
+        }
+        this.$modalDlg = this.$modalCanvas.find('.modal-dialog');
+        this.$text = $('#text');
+        this.$textWrap = $('#text-wrap');
+        this.$textClone = $('#text-clone');
+        this.$btnOk = $('#btn-ok');
+        this.$imgDone = $('#imgDone');
+        this.ctx = this.$canvas[0].getContext('2d');
+        this.bindEvent();
+      },
+      bindEvent: function() {
+        var _this = this;
+        $(document.body).on('click', '.js-imgfun', function(e) {
+          var $img = this.nodeName === 'IMG' ? $(this) : $(this).find('img');
+          if (!$img.length || !$img.attr('src')) {
+            return false;
+          }
+          _this.$modalCanvas.modal('show');
+          _this.importImg($img);
+          _this.$modalDlg.one('webkitTransitionEnd transitionEnd', function() {
+        		_this.$textWrap.removeClass('hide');
+          	_this.setText($img);
+          });
+        });
+        this.$text.on('input paste', function() {
+          _this.$textClone.html($(this).val().replace(/\r\n|\r|\n/g, '<br> ').replace(/ /g, '&nbsp;'));
+          var width = _this.$textClone.outerWidth();
+          var height = _this.$textClone.outerHeight();
+          //console.log(width, height);
+          _this.$text.css({ width: width, height: height });
+        });
+        this.$textWrap.dragmove({
+          onEnd: function(e) {
+            //console.log(e);
+          }
+        });
+        this.$btnOk.click(function() {
+        	//return;
+        	if ($(this).hasClass('disabled')) {
+        		return false;
+        	}
+          var html = _this.$textClone.html().replace(/&nbsp;/g, ' ');
+          var arrText = html.split('<br>');
+          var offset = _this.$textWrap.offset();
+          var canvasOffset = _this.$canvas.offset();
+          var left = offset.left - canvasOffset.left + 7;
+          var top = offset.top - canvasOffset.top + 7;
+          //console.log(offset, canvasOffset)
+          _this.ctx.font = _this.opts.font;
+          _this.ctx.textBaseline = "hanging";
+          for (var i = 0, len = arrText.length; i < len; i++) {
+            _this.ctx.fillText($.trim(arrText[i]), left, top + (i * _this.opts.fontSize));
+          }
+          // _this.$textWrap.addClass('hide');
+          // _this.$canvas.hide();
+        	_this.$imgDone.attr('src', _this.$canvas[0].toDataURL()).removeClass('hide');
+          $(this).addClass('disabled');
+        	// dragText.eq(0)[0].resetPos();
+         //  _this.$textWrap.css('transform', 'translate3d(0,0,0)');
+          _this.setThings();
+        });
+        this.$modalCanvas.find('.close').click(function() {
+        	_this.setThings();
+        });
+      },
+      setText: function($img) {
+        var pos = $img.data('pos');
+        var text = $img.data('text') || '';
+        if (pos) {
+        	var offset = this.$canvas.offset();
+        	if (pos.top) {
+        		//console.log(pos.top, offset.top, pos.top + offset.top)
+        		//console.log(pos.left, offset.left, pos.left + offset.left)
+        		this.$textWrap.css('top', pos.top + offset.top);
+        	}
+        	if (pos.left) {
+        		this.$textWrap.css('left', pos.left + offset.left);
+        	}
+        }
+      	text = text.replace(/ /g, '&nbsp;');
+      	this.$textClone.html(text);
+        var width = this.$textClone.outerWidth();
+        var height = this.$textClone.outerHeight();
+        this.$text.css({ width: width, height: height });
+        this.$text.val(this.dealTextReturn(text, false));
+      },
+      importImg: function($img) {
+      	var _this = this;
+      	var large = $img.data('large');
+    		var img = new Image();
+    		img.src = large ? large : $img.data('original');
+    		img.onload = function() {
+    			//console.log('image');
+    			var winW = $(window).width();
+
+	        var width = _this.$canvas[0].width = img.naturalWidth;
+	        var height = _this.$canvas[0].height = img.naturalHeight;
+	        _this.$canvas.show();
+	        _this.ctx.clearRect(0, 0, width, height);
+	        _this.ctx.drawImage(img, 0, 0);
+	        _this.$text.css('maxWidth', width - _this.opts.fontSize);
+	        _this.$textClone.css('maxWidth', width - _this.opts.fontSize);
+	        _this.$imgDone.addClass('hide');
+	        _this.$btnOk.removeClass('disabled');
+    		}
+      },
+      setThings: function() {
+        this.$textWrap.addClass('hide');
+        this.$canvas.hide();
+      	this.$textWrap[0].resetPos();
+        this.$textWrap.css('transform', 'translate3d(0,0,0)');
+      },
+      dealTextReturn: function(str, isToHtml) {
+				if (!isToHtml) {
+					return str.replace(/<br\s?\/?>/g, '\r\n');
+				} else {
+					return str.replace(/\r\n|\r|\n/g, '<br>');
+				}
+			}
+    };
+    
+  </script>
+</body>
+</html>
