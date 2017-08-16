@@ -170,6 +170,7 @@
 		if(OS && app) {
 			// Hijack click event
 			el.onclick = function(e) {
+				console.log('click');
 				e.preventDefault();
 				e.stopImmediatePropagation();
 
