@@ -1,0 +1,168 @@
+{
+  "all": [
+    {
+      "id": 1,
+      "view": 1,
+      "isHot": 1,
+      "title": "BBC World News",
+      "local": "bbc",
+      "desc": "Best News TV",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://hlslive.lcdn.une.net.co/v1/AUTH_HLSLIVE/BBCW/tu1_1.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "view": 1,
+      "isHot": 1,
+      "title": "Sky News",
+      "local": "sky",
+      "desc": "Sky News TV",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://skydvn-nowtv-atv-prod.skydvn.com/atv/skynews/1404/live/04.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "view": 1,
+      "isHot": 1,
+      "title": "CNN http mp4",
+      "local": "cnn",
+      "desc": "",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://content.jwplatform.com/videos/HkauGhRi-640.mp4"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "view": 1,
+      "isHot": 0,
+      "title": "Fox 23",
+      "local": "fox23",
+      "desc": "Fox 23 TV",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://cmghlslive-i.akamaihd.net:80/hls/live/224709/KOKI/904k/prog.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "view": 1,
+      "isHot": 0,
+      "title": "ABC News",
+      "local": "abc",
+      "desc": "ABC News TV",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://abclive.abcnews.com/i/abc_live4@136330/master.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "view": 1,
+      "isHot": 0,
+      "title": "CSPAN1",
+      "local": "cspan",
+      "desc": "CSPAN 1",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://cspan1-lh.akamaihd.net/i/cspan1_1@304727/master.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "view": 1,
+      "isHot": 0,
+      "title": "DW TV",
+      "local": "dwtv",
+      "desc": "",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://dwstream4-lh.akamaihd.net/i/dwstream4_live@131329/master.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "view": 1,
+      "isHot": 1,
+      "title": "France 24",
+      "local": "fr24",
+      "desc": "",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "view": 1,
+      "isHot": 1,
+      "title": "Euro News",
+      "local": "euro",
+      "desc": "none",
+      "logo": "",
+      "sources": []
+    },
+    {
+      "id": 10,
+      "view": 1,
+      "isHot": 0,
+      "title": "Bloomberg",
+      "local": "bloomberg",
+      "desc": "",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://edge02p.friday.tw/live/fet007/chunklist_w1500640268626.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "view": 1,
+      "isHot": 0,
+      "title": "CBS",
+      "local": "cbs",
+      "desc": "",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://cmghlslive-i.akamaihd.net:80/hls/live/224714/WJAX/904k/prog.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "view": 1,
+      "isHot": 1,
+      "title": "Channel NewsAsia",
+      "local": "newsasia",
+      "desc": "",
+      "logo": "",
+      "sources": [
+        {
+          "uri": "http://tglcnas-lh.akamaihd.net/i/cnas_fta@334579/master.m3u8"
+        }
+      ]
+    }
+  ]
+}
